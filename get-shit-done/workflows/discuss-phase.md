@@ -252,6 +252,7 @@ Ask 4 questions per area before offering to continue or move on. Each answer oft
 
    If "More questions" → ask 4 more, then check again
    If "Next area" → proceed to next selected area
+   If "Other" (free text) → interpret intent: continuation phrases ("chat more", "keep going", "yes", "more") map to "More questions"; advancement phrases ("done", "move on", "next", "skip") map to "Next area". If ambiguous, ask: "Continue with more questions about [area], or move to the next area?"
 
 4. **After all areas complete:**
    - header: "Done"
@@ -394,6 +395,65 @@ node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs(${padded_phase}): cap
 Confirm: "Committed: docs(${padded_phase}): capture phase context"
 </step>
 
+<step name="update_state">
+Update STATE.md with session info:
+
+```bash
+node ~/.claude/get-shit-done/bin/gsd-tools.js state record-session \
+  --stopped-at "Phase ${PHASE} context gathered" \
+  --resume-file "${phase_dir}/${padded_phase}-CONTEXT.md"
+```
+
+Commit STATE.md:
+
+```bash
+node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs(state): record phase ${PHASE} context session" --files .planning/STATE.md
+```
+</step>
+
+<step name="auto_advance">
+Check for auto-advance trigger:
+
+1. Parse `--auto` flag from $ARGUMENTS
+2. Read `workflow.auto_advance` from config:
+   ```bash
+   AUTO_CFG=$(node ~/.claude/get-shit-done/bin/gsd-tools.js config get workflow.auto_advance 2>/dev/null || echo "false")
+   ```
+
+**If `--auto` flag present OR `AUTO_CFG` is true:**
+
+Display banner:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► AUTO-ADVANCING TO PLAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Context captured. Spawning plan-phase...
+```
+
+Spawn plan-phase as Task:
+```
+Task(
+  prompt="Run /gsd:plan-phase ${PHASE} --auto",
+  subagent_type="general-purpose",
+  description="Plan Phase ${PHASE}"
+)
+```
+
+**Handle plan-phase return:**
+- **PLANNING COMPLETE** → Plan-phase handles chaining to execute-phase (via its own auto_advance step)
+- **PLANNING INCONCLUSIVE / CHECKPOINT** → Display result, stop chain:
+  ```
+  Auto-advance stopped: Planning needs input.
+
+  Review the output above and continue manually:
+  /gsd:plan-phase ${PHASE}
+  ```
+
+**If neither `--auto` nor config enabled:**
+Route to `confirm_creation` step (existing behavior — show manual next steps).
+</step>
+
 </process>
 
 <success_criteria>
@@ -404,5 +464,6 @@ Confirm: "Committed: docs(${padded_phase}): capture phase context"
 - Scope creep redirected to deferred ideas
 - CONTEXT.md captures actual decisions, not vague vision
 - Deferred ideas preserved for future phases
+- STATE.md updated with session info
 - User knows next steps
 </success_criteria>
