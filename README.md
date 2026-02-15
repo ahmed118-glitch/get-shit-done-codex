@@ -33,8 +33,21 @@ npx @ahmed118glitch/get-shit-done-codex@latest --path /path/to/project
 # Install shared copy under your home directory as well:
 npx @ahmed118glitch/get-shit-done-codex@latest --global
 
-# Run the runtime installer (Claude/OpenCode/Gemini) from this scoped package:
-npx --yes --package=@ahmed118glitch/get-shit-done-codex@latest get-shit-done-cc --help
+# Run the runtime installer from this scoped package (examples):
+npx --yes --package=@ahmed118glitch/get-shit-done-codex@latest get-shit-done-cc --all --global
+npx --yes --package=@ahmed118glitch/get-shit-done-codex@latest get-shit-done-cc --claude --local
+```
+
+Global install writes prompts to `~/.codex/prompts` (not nested).
+
+## Verify Install
+
+```bash
+# Project prompts
+ls ./.codex/prompts/gsd-*.md
+
+# Global prompts (if you used --global)
+ls ~/.codex/prompts/gsd-*.md
 ```
 
 ## Runtime Command Surface
@@ -44,6 +57,8 @@ npx --yes --package=@ahmed118glitch/get-shit-done-codex@latest get-shit-done-cc 
 - Codex prompt files are in `.codex/prompts/gsd-*.md`
 
 ## Quick Workflow
+
+Use the command surface above (`/gsd:<command>`, `/gsd-<command>`, or Codex `gsd-*` prompts).
 
 1. Start a project with `new-project`
 2. Plan a phase with `plan-phase`
@@ -66,6 +81,7 @@ Installed runtime targets:
 - Claude global: `~/.claude`
 - OpenCode global: `~/.config/opencode` (or platform XDG equivalent)
 - Gemini global: `~/.gemini`
+- Codex global prompts/skills: `~/.codex/prompts`, `~/.codex/skills`
 - Local mode: runtime folders in the current project
 
 ## Development
