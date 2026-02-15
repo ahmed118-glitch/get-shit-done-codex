@@ -17,6 +17,12 @@ node .claude/get-shit-done/bin/gsd-tools.js ...
 - Parse JSON with ConvertFrom-Json; parse key/value output when workflow uses KEY=value raw mode.
 - No jq / bash-only constructs.
 
+## Subagent lifecycle (required)
+
+- Translate each upstream `Task(...)` into `spawn_agent` -> `wait` -> `close_agent`.
+- Spawn only when the upstream workflow defines an agent role.
+- Use `.claude/agents/gsd-*.md` as role context for each spawned agent.
+- Do not advance workflow steps until wait and close complete.
 ## Execution
 1. Parse <version> from the user input.
 2. Run init:
