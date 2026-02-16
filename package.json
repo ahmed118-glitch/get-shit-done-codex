@@ -29,15 +29,15 @@
     "context-engineering",
     "spec-driven-development"
   ],
-  "author": "TÂCHES / Codex port by ahmed118-glitch",
+  "author": "TÂCHES / Codex port by redstar1337",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ahmed118-glitch/get-shit-done-codex.git"
+    "url": "git+https://github.com/redstar1337/get-shit-done-codex.git"
   },
-  "homepage": "https://github.com/ahmed118-glitch/get-shit-done-codex",
+  "homepage": "https://github.com/redstar1337/get-shit-done-codex",
   "bugs": {
-    "url": "https://github.com/ahmed118-glitch/get-shit-done-codex/issues"
+    "url": "https://github.com/redstar1337/get-shit-done-codex/issues"
   },
   "engines": {
     "node": ">=16.7.0"
