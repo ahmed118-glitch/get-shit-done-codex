@@ -30,12 +30,6 @@ Capture idea or task as todo from current conversation context
 - Use `.claude/agents/gsd-*.md` as role context for each spawned agent.
 - Do not advance workflow steps until wait and close complete.
 
-## Update check
-- Best-effort only; do not fail if offline.
-- Check installed Codex fork version from `.codex/gsd/VERSION` (or `~/.codex/gsd/VERSION`).
-- Check latest published version with `npm view gsd-codex-cli version`.
-- If versions differ, surface: "Update available: <installed> -> <latest>. Next: gsd-update (Codex) / /gsd:update (Claude) or re-run npx gsd-codex-cli@latest."
-
 ## Execution
 1. Parse [optional description] from command argument text or the latest user message (natural language allowed).
 2. Run init:

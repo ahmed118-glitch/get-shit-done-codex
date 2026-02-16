@@ -30,12 +30,6 @@ Create detailed execution plan for a phase (PLAN.md) with verification loop
 - Use `.claude/agents/gsd-*.md` as role context for each spawned agent.
 - Do not advance workflow steps until wait and close complete.
 
-## Update check
-- Best-effort only; do not fail if offline.
-- Check installed Codex fork version from `.codex/gsd/VERSION` (or `~/.codex/gsd/VERSION`).
-- Check latest published version with `npm view gsd-codex-cli version`.
-- If versions differ, surface: "Update available: <installed> -> <latest>. Next: gsd-update (Codex) / /gsd:update (Claude) or re-run npx gsd-codex-cli@latest."
-
 ## Execution
 1. Parse "[phase] [--research] [--skip-research] [--gaps] [--skip-verify]" from command argument text or the latest user message (natural language allowed).
 2. Run init:

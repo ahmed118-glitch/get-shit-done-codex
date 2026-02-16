@@ -1,7 +1,11 @@
 ---
 description: Diagnose Codex+Claude GSD installation (engine, prompts, versions)
 argument-hint: [none]
----## Objective
+---
+
+$ARGUMENTS
+
+## Objective
 Diagnose whether this project is set up to run GSD prompts in Codex while remaining compatible with Claude workflows on the same `.planning/` milestone/phases.
 
 ## Compatibility
@@ -27,6 +31,8 @@ Run these checks and then present a compact table: `check | status | details | f
 ### Project state
 - `.planning/` exists (if missing, user hasn’t initialized a project).
 
+## Update check
+- Best-effort only; do not fail if offline.
 ### Update availability (best-effort)
 - Latest Codex fork version (do not fail if offline):
   - `npm view gsd-codex-cli version`
