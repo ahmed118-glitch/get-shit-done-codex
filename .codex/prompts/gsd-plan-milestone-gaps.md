@@ -12,10 +12,11 @@ Create phases to close all gaps identified by milestone audit
 - Use .codex/skills/get-shit-done-codex semantics.
 - Treat upstream workflow as the source of truth.
 - Replace user-specific paths with workspace-relative paths (.claude/..., .planning/...).
-- Resolve gsd-tools path (prefer .cjs, fallback to .js):
-  $GsdTools = if (Test-Path ".claude/get-shit-done/bin/gsd-tools.cjs") { ".claude/get-shit-done/bin/gsd-tools.cjs" } elseif (Test-Path ".claude/get-shit-done/bin/gsd-tools.js") { ".claude/get-shit-done/bin/gsd-tools.js" } elseif (Test-Path "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs") { "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" } elseif (Test-Path "$HOME/.claude/get-shit-done/bin/gsd-tools.js") { "$HOME/.claude/get-shit-done/bin/gsd-tools.js" } else { throw "Missing gsd-tools in .claude or $HOME/.claude. Reinstall GSD." }
-- Run engine commands through PowerShell:
-  node $GsdTools ...
+- Use one of these engine paths (prefer local, fallback global):
+  node .claude/get-shit-done/bin/gsd-tools.js ...
+  node ~/.claude/get-shit-done/bin/gsd-tools.js ...
+- If `.js` is unavailable, use the same path with `.cjs`.
+- Run engine commands through PowerShell.
 - Parse JSON with ConvertFrom-Json; parse key/value output when workflow uses KEY=value raw mode.
 - No jq / bash-only constructs.
 
@@ -27,16 +28,14 @@ Create phases to close all gaps identified by milestone audit
 - Do not advance workflow steps until wait and close complete.
 ## Update check
 - Best-effort only; do not fail if offline.
-- Run:
-  $installed = if (Test-Path ".codex/gsd/VERSION") { (Get-Content ".codex/gsd/VERSION" -Raw).Trim() } elseif (Test-Path "$HOME/.codex/gsd/VERSION") { (Get-Content "$HOME/.codex/gsd/VERSION" -Raw).Trim() } else { $null }
-  $latest = $null; try { $latest = (npm view gsd-codex-cli version).Trim() } catch {}
-- If $installed and $latest and $installed -ne $latest, surface:
-  "Update available: $installed -> $latest. Next: gsd-update (Codex) / /gsd:update (Claude) or re-run npx gsd-codex-cli@latest."
+- Check installed Codex fork version from `.codex/gsd/VERSION` (or `~/.codex/gsd/VERSION`).
+- Check latest published version with `npm view gsd-codex-cli version`.
+- If versions differ, surface: "Update available: <installed> -> <latest>. Next: gsd-update (Codex) / /gsd:update (Claude) or re-run npx gsd-codex-cli@latest."
 
 ## Execution
 1. Parse [none] from the user input.
 2. Run init:
-node $GsdTools init milestone-op --raw
+node <gsd-tools-path> init milestone-op --raw
 
 3. Load .claude/get-shit-done/workflows/plan-milestone-gaps.md and execute it step-by-step.
 4. Translate each Task(...) in workflow into:
@@ -44,7 +43,7 @@ node $GsdTools init milestone-op --raw
    - wait for each spawned agent and apply returned output before moving forward.
 5. Preserve all gates and routing from upstream workflow.
 6. Preserve commit behavior using 
-node $GsdTools commit "message" --files ....
+node <gsd-tools-path> commit "message" --files ....
 7. If commit preflight fails (no git / no commit flag), proceed in read-only mode and report clearly.
 
 ## Completion output

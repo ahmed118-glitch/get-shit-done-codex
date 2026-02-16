@@ -19,10 +19,10 @@ Run these checks and then present a compact table: `check | status | details | f
 ### Versions
 - Codex fork installed version (first match wins):
   - `.codex/gsd/VERSION`
-  - `$HOME/.codex/gsd/VERSION`
+  - `~/.codex/gsd/VERSION`
 - Claude engine installed version (first match wins):
   - `.claude/get-shit-done/VERSION`
-  - `$HOME/.claude/get-shit-done/VERSION`
+  - `~/.claude/get-shit-done/VERSION`
 
 ### Engine presence (required for Codex prompts)
 - `.claude/get-shit-done/bin/gsd-tools.cjs` OR `.claude/get-shit-done/bin/gsd-tools.js`
