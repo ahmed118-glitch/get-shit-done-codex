@@ -3,8 +3,6 @@ description: Check project progress, show context, and route to next action
 argument-hint: [none]
 ---
 
-
-
 ## Objective
 Check project progress, show context, and route to next action
 
@@ -26,6 +24,7 @@ Check project progress, show context, and route to next action
 - Spawn only when the upstream workflow defines an agent role.
 - Use `.claude/agents/gsd-*.md` as role context for each spawned agent.
 - Do not advance workflow steps until wait and close complete.
+
 ## Update check
 - Best-effort only; do not fail if offline.
 - Check installed Codex fork version from `.codex/gsd/VERSION` (or `~/.codex/gsd/VERSION`).

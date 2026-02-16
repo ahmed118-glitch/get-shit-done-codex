@@ -3,8 +3,6 @@ description: Execute all plans in a phase with wave-based parallelization
 argument-hint: "<phase-number> [--gaps-only]"
 ---
 
-
-
 ## Objective
 Execute all plans in a phase with wave-based parallelization
 
@@ -26,6 +24,7 @@ Execute all plans in a phase with wave-based parallelization
 - Spawn only when the upstream workflow defines an agent role.
 - Use `.claude/agents/gsd-*.md` as role context for each spawned agent.
 - Do not advance workflow steps until wait and close complete.
+
 ## Update check
 - Best-effort only; do not fail if offline.
 - Check installed Codex fork version from `.codex/gsd/VERSION` (or `~/.codex/gsd/VERSION`).

@@ -3,8 +3,6 @@ description: Analyze codebase with parallel mapper agents to produce .planning/c
 argument-hint: "[optional: specific area to map, for example api or auth]"
 ---
 
-
-
 ## Objective
 Analyze codebase with parallel mapper agents to produce .planning/codebase/ documents
 
@@ -26,6 +24,7 @@ Analyze codebase with parallel mapper agents to produce .planning/codebase/ docu
 - Spawn only when the upstream workflow defines an agent role.
 - Use `.claude/agents/gsd-*.md` as role context for each spawned agent.
 - Do not advance workflow steps until wait and close complete.
+
 ## Update check
 - Best-effort only; do not fail if offline.
 - Check installed Codex fork version from `.codex/gsd/VERSION` (or `~/.codex/gsd/VERSION`).

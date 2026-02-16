@@ -3,8 +3,6 @@ description: Initialize a new project with deep context gathering and PROJECT.md
 argument-hint: "[--auto]"
 ---
 
-
-
 ## Objective
 Initialize a new project with deep context gathering and PROJECT.md
 
@@ -26,6 +24,7 @@ Initialize a new project with deep context gathering and PROJECT.md
 - Spawn only when the upstream workflow defines an agent role.
 - Use `.claude/agents/gsd-*.md` as role context for each spawned agent.
 - Do not advance workflow steps until wait and close complete.
+
 ## Update check
 - Best-effort only; do not fail if offline.
 - Check installed Codex fork version from `.codex/gsd/VERSION` (or `~/.codex/gsd/VERSION`).

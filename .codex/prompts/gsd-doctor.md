@@ -1,11 +1,7 @@
 ---
 description: Diagnose Codex+Claude GSD installation (engine, prompts, versions)
 argument-hint: [none]
----
-
-
-
-## Objective
+---## Objective
 Diagnose whether this project is set up to run GSD prompts in Codex while remaining compatible with Claude workflows on the same `.planning/` milestone/phases.
 
 ## Compatibility
@@ -48,4 +44,3 @@ Run these checks and then present a compact table: `check | status | details | f
   - If engine missing: `npx gsd-codex-cli@latest --path .`
   - Else if `.planning/` missing: `gsd-new-project` / `/gsd:new-project`
   - Else: `gsd-progress` / `/gsd:progress`
-
