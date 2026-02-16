@@ -42,8 +42,13 @@ const child = spawn(process.execPath, ['-e', `
 
   let latest = null;
   try {
-    latest = execSync('npm view get-shit-done-cc version', { encoding: 'utf8', timeout: 10000, windowsHide: true }).trim();
+    latest = execSync('npm view gsd-codex-cli version', { encoding: 'utf8', timeout: 10000, windowsHide: true }).trim();
   } catch (e) {}
+  if (!latest) {
+    try {
+      latest = execSync('npm view get-shit-done-cc version', { encoding: 'utf8', timeout: 10000, windowsHide: true }).trim();
+    } catch (e) {}
+  }
 
   const result = {
     update_available: latest && installed !== latest,

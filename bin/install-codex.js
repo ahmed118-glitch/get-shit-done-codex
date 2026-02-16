@@ -71,6 +71,7 @@ function copyCodexToDirectory(baseDir) {
   const sourceCodex = path.join(repoRoot, '.codex');
   const sourceGetShitDone = resolveSourceDir('get-shit-done', '.claude/get-shit-done');
   const sourceAgents = resolveSourceDir('agents', '.claude/agents');
+  const versionDest = path.join(targetClaude, 'get-shit-done', 'VERSION');
 
   ensureDir(baseDir);
   ensureDir(targetCodex);
@@ -79,6 +80,8 @@ function copyCodexToDirectory(baseDir) {
   copyRecursive(sourceCodex, targetCodex);
   copyRecursive(sourceGetShitDone, path.join(targetClaude, 'get-shit-done'));
   copyRecursive(sourceAgents, path.join(targetClaude, 'agents'));
+  ensureDir(path.dirname(versionDest));
+  fs.writeFileSync(versionDest, `${pkg.version}\n`);
 }
 
 copyCodexToDirectory(targetDir);
