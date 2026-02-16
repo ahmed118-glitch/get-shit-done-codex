@@ -1387,6 +1387,56 @@ describe('phase add command', () => {
     const output = JSON.parse(result.output);
     assert.strictEqual(output.phase_number, 1, 'should be phase 1');
   });
+
+  test('inserts before Progress in milestone-grouped roadmap', () => {
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'ROADMAP.md'),
+      `# Roadmap: Demo
+
+## Milestones
+- v1.0 MVP - Phases 1-4 (shipped)
+- v1.1 Growth - Phases 5-6 (in progress)
+- v2.0 Scale - Phases 7-8 (planned)
+
+## Phases
+
+<details>
+<summary>v1.0 MVP (Phases 1-4) - SHIPPED</summary>
+
+### Phase 1: Foundation
+**Goal:** Setup
+
+</details>
+
+### v1.1 Growth (In Progress)
+
+#### Phase 5: Growth
+**Goal:** Build growth
+
+### v2.0 Scale (Planned)
+
+#### Phase 6: Scale
+**Goal:** Scale system
+
+## Progress
+
+| Phase | Plans |
+| 1 | 0/1 |
+`
+    );
+
+    const result = runGsdTools('phase add Security', tmpDir);
+    assert.ok(result.success, `Command failed: ${result.error}`);
+
+    const roadmap = fs.readFileSync(path.join(tmpDir, '.planning', 'ROADMAP.md'), 'utf-8');
+    const phaseIdx = roadmap.indexOf('Phase 7: Security');
+    const progressIdx = roadmap.indexOf('## Progress');
+    const milestoneIdx = roadmap.indexOf('### v2.0 Scale');
+
+    assert.ok(phaseIdx !== -1, 'should include new phase');
+    assert.ok(phaseIdx > milestoneIdx, 'new phase should be inside last milestone block');
+    assert.ok(phaseIdx < progressIdx, 'new phase should appear before Progress');
+  });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

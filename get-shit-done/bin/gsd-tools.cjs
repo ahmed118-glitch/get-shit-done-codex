@@ -2697,14 +2697,35 @@ function cmdPhaseAdd(cwd, description, raw) {
   // Build phase entry
   const phaseEntry = `\n### Phase ${newPhaseNum}: ${description}\n\n**Goal:** [To be planned]\n**Depends on:** Phase ${maxPhase}\n**Plans:** 0 plans\n\nPlans:\n- [ ] TBD (run /gsd:plan-phase ${newPhaseNum} to break down)\n`;
 
-  // Find insertion point: before last "---" or at end
-  let updatedContent;
-  const lastSeparator = content.lastIndexOf('\n---');
-  if (lastSeparator > 0) {
-    updatedContent = content.slice(0, lastSeparator) + phaseEntry + content.slice(lastSeparator);
-  } else {
-    updatedContent = content + phaseEntry;
+  // Find insertion point: inside last milestone block (if grouped), otherwise before Progress or end
+  const progressMatch = content.match(/^##\s+Progress\b/m);
+  const progressIdx = progressMatch ? progressMatch.index : -1;
+  const searchEnd = progressIdx >= 0 ? progressIdx : content.length;
+  const beforeProgress = content.slice(0, searchEnd);
+
+  const milestonePattern = /^###\s+.*v\d+\.\d+.*$/gmi;
+  const milestoneHeaders = [];
+  let mm;
+  while ((mm = milestonePattern.exec(beforeProgress)) !== null) {
+    milestoneHeaders.push({ index: mm.index });
   }
+
+  let insertIdx = content.length;
+  if (milestoneHeaders.length > 0) {
+    const target = milestoneHeaders[milestoneHeaders.length - 1];
+    let nextHeaderIdx = searchEnd;
+    for (const header of milestoneHeaders) {
+      if (header.index > target.index) {
+        nextHeaderIdx = header.index;
+        break;
+      }
+    }
+    insertIdx = nextHeaderIdx;
+  } else if (progressIdx >= 0) {
+    insertIdx = progressIdx;
+  }
+
+  const updatedContent = content.slice(0, insertIdx) + phaseEntry + content.slice(insertIdx);
 
   fs.writeFileSync(roadmapPath, updatedContent, 'utf-8');
 
