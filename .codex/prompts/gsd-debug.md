@@ -12,8 +12,10 @@ Systematic debugging with persistent state across context resets
 - Use .codex/skills/get-shit-done-codex semantics.
 - Treat upstream workflow as the source of truth.
 - Replace user-specific paths with workspace-relative paths (.claude/..., .planning/...).
-- Run engine commands through PowerShell: 
-node .claude/get-shit-done/bin/gsd-tools.js ...
+- Resolve gsd-tools path (prefer .cjs, fallback to .js):
+  $GsdTools = if (Test-Path ".claude/get-shit-done/bin/gsd-tools.cjs") { ".claude/get-shit-done/bin/gsd-tools.cjs" } elseif (Test-Path ".claude/get-shit-done/bin/gsd-tools.js") { ".claude/get-shit-done/bin/gsd-tools.js" } elseif (Test-Path "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs") { "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" } elseif (Test-Path "$HOME/.claude/get-shit-done/bin/gsd-tools.js") { "$HOME/.claude/get-shit-done/bin/gsd-tools.js" } else { throw "Missing gsd-tools in .claude or $HOME/.claude. Reinstall GSD." }
+- Run engine commands through PowerShell:
+  node $GsdTools ...
 - Parse JSON with ConvertFrom-Json; parse key/value output when workflow uses KEY=value raw mode.
 - No jq / bash-only constructs.
 
@@ -24,16 +26,17 @@ node .claude/get-shit-done/bin/gsd-tools.js ...
 - Use `.claude/agents/gsd-*.md` as role context for each spawned agent.
 - Do not advance workflow steps until wait and close complete.
 ## Update check
+- Best-effort only; do not fail if offline.
 - Run:
-  $update = node .claude/get-shit-done/bin/gsd-tools.cjs update check --raw | ConvertFrom-Json
-- If $update.update_available is true, surface:
-  "Update available: $($update.installed) -> $($update.latest). Run /gsd:update or re-run npx gsd-codex-cli@latest."
-
+  $installed = if (Test-Path ".codex/gsd/VERSION") { (Get-Content ".codex/gsd/VERSION" -Raw).Trim() } elseif (Test-Path "$HOME/.codex/gsd/VERSION") { (Get-Content "$HOME/.codex/gsd/VERSION" -Raw).Trim() } else { $null }
+  $latest = $null; try { $latest = (npm view gsd-codex-cli version).Trim() } catch {}
+- If $installed and $latest and $installed -ne $latest, surface:
+  "Update available: $installed -> $latest. Next: gsd-update (Codex) / /gsd:update (Claude) or re-run npx gsd-codex-cli@latest."
 
 ## Execution
 1. Parse [issue description] from the user input.
 2. Run init:
-node .claude/get-shit-done/bin/gsd-tools.js state load --raw
+node $GsdTools state load --raw
 
 3. Execute the debug flow defined in this command (no separate workflow file exists in the gsd commands set).
 4. Translate each Task(...) in the debug flow into:
@@ -41,13 +44,13 @@ node .claude/get-shit-done/bin/gsd-tools.js state load --raw
    - wait for each spawned agent and apply returned output before moving forward.
 5. Preserve all gates and routing from upstream workflow.
 6. Preserve commit behavior using 
-node .claude/get-shit-done/bin/gsd-tools.js commit "message" --files ....
+node $GsdTools commit "message" --files ....
 7. Checkpoint handling:
    - If an active debug session exists and no new issue was provided, list open sessions and ask the user which to resume.
    - If a checkpoint is returned by the debugger, summarize the checkpoint and continue only after user confirmation.
 8. If commit preflight fails (no git / no commit flag), proceed in read-only mode and report clearly.
 
 ## Completion output
-- Summarize key artifacts created/updated and next recommended command.
-
-
+- Summarize key artifacts created/updated.
+- Next recommended command: use the next user-facing GSD command (Codex prompt name + Claude slash command).
+- Never recommend internal `node ... gsd-tools ...` commands to the user.

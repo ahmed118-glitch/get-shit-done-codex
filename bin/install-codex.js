@@ -72,6 +72,7 @@ function copyCodexToDirectory(baseDir) {
   const sourceGetShitDone = resolveSourceDir('get-shit-done', '.claude/get-shit-done');
   const sourceAgents = resolveSourceDir('agents', '.claude/agents');
   const versionDest = path.join(targetClaude, 'get-shit-done', 'VERSION');
+  const codexVersionDest = path.join(targetCodex, 'gsd', 'VERSION');
 
   ensureDir(baseDir);
   ensureDir(targetCodex);
@@ -82,6 +83,8 @@ function copyCodexToDirectory(baseDir) {
   copyRecursive(sourceAgents, path.join(targetClaude, 'agents'));
   ensureDir(path.dirname(versionDest));
   fs.writeFileSync(versionDest, `${pkg.version}\n`);
+  ensureDir(path.dirname(codexVersionDest));
+  fs.writeFileSync(codexVersionDest, `${pkg.version}\n`);
 }
 
 copyCodexToDirectory(targetDir);
@@ -99,5 +102,6 @@ if (installGlobal) {
 }
 console.log('\nNext steps:');
 console.log('  1) Open your project in Codex');
-console.log('  2) Run prompt gsd-new-project, then gsd-plan-phase, gsd-execute-phase');
-console.log('  3) Use .codex/prompts/* for all GSD commands in this fork');
+console.log('  2) Run prompt gsd-new-project, then gsd-discuss-phase, gsd-plan-phase, gsd-execute-phase');
+console.log('  3) If something looks off, run prompt gsd-doctor');
+console.log('  4) Use .codex/prompts/* for all GSD commands in this fork');
