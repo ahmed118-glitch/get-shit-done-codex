@@ -18,6 +18,8 @@ Surface Claude's assumptions about a phase approach before planning
 - Do not set `node <path> ...` as one string variable and invoke `& $var`; run direct `node <path> ...` or `& node <path> ...`.
 - Parse JSON with ConvertFrom-Json; parse key/value output when workflow uses KEY=value raw mode.
 - No jq / bash-only constructs.
+- Accept natural-language command input; do not require an exact literal argument template.
+- If a required argument is still missing after extraction, ask one concise clarification question.
 
 ## Subagent lifecycle (required)
 
@@ -33,7 +35,7 @@ Surface Claude's assumptions about a phase approach before planning
 - If versions differ, surface: "Update available: <installed> -> <latest>. Next: gsd-update (Codex) / /gsd:update (Claude) or re-run npx gsd-codex-cli@latest."
 
 ## Execution
-1. Parse "[phase]" from the user input.
+1. Parse "[phase]" from command argument text or the latest user message (natural language allowed).
 2. Run init:
 node <gsd-tools-path> init phase-op [argument] --raw
 

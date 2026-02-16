@@ -18,6 +18,8 @@ Execute a quick task with GSD guarantees (atomic commits, state tracking) but sk
 - Do not set `node <path> ...` as one string variable and invoke `& $var`; run direct `node <path> ...` or `& node <path> ...`.
 - Parse JSON with ConvertFrom-Json; parse key/value output when workflow uses KEY=value raw mode.
 - No jq / bash-only constructs.
+- Accept natural-language command input; do not require an exact literal argument template.
+- If a required argument is still missing after extraction, ask one concise clarification question.
 
 ## Subagent lifecycle (required)
 
@@ -33,7 +35,7 @@ Execute a quick task with GSD guarantees (atomic commits, state tracking) but sk
 - If versions differ, surface: "Update available: <installed> -> <latest>. Next: gsd-update (Codex) / /gsd:update (Claude) or re-run npx gsd-codex-cli@latest."
 
 ## Execution
-1. Parse [none] from the user input.
+1. No positional argument is required. Read flags from command text if present.
 2. Run init:
 node <gsd-tools-path> init quick "[argument]" --raw
 

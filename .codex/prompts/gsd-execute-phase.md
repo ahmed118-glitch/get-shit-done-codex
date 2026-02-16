@@ -18,6 +18,8 @@ Execute all plans in a phase with wave-based parallelization
 - Do not set `node <path> ...` as one string variable and invoke `& $var`; run direct `node <path> ...` or `& node <path> ...`.
 - Parse JSON with ConvertFrom-Json; parse key/value output when workflow uses KEY=value raw mode.
 - No jq / bash-only constructs.
+- Accept natural-language command input; do not require an exact literal argument template.
+- If a required argument is still missing after extraction, ask one concise clarification question.
 
 ## Subagent lifecycle (required)
 
