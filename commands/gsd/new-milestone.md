@@ -1,6 +1,6 @@
 ---
 name: gsd:new-milestone
-description: Start a new milestone cycle — update PROJECT.md and route to requirements
+description: Start a new milestone cycle end-to-end (questioning -> requirements -> roadmap)
 argument-hint: "[milestone name, e.g., 'v1.1 Notifications']"
 allowed-tools:
   - Read
@@ -48,4 +48,7 @@ Milestone name: $ARGUMENTS (optional - will prompt if not provided)
 <process>
 Execute the new-milestone workflow from @~/.claude/get-shit-done/workflows/new-milestone.md end-to-end.
 Preserve all workflow gates (validation, questioning, research, requirements, roadmap approval, commits).
+Hard gates:
+- If `.planning/MILESTONE-CONTEXT.md` is missing, present milestone direction options and capture user confirmation before defining requirements.
+- Do not finish successfully unless `.planning/ROADMAP.md` exists (or explicit blocked reason is reported).
 </process>

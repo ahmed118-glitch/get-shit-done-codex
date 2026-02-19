@@ -26,9 +26,15 @@ Read all files referenced by the invoking prompt's execution_context before star
 - Present summary for confirmation
 
 **If no context file:**
-- Present what shipped in last milestone
-- Ask: "What do you want to build next?"
-- Use AskUserQuestion to explore features, priorities, constraints, scope
+- Present what shipped in last milestone plus pending todos/blockers.
+- Run an explicit AskUserQuestion with milestone direction options before drafting scope:
+  - "Ship features (Recommended)" — Build the next user-facing capability set
+  - "Stabilize quality" — Focus on bug fixes, reliability, and hardening
+  - "Platform + ops" — Improve architecture, performance, tooling, and observability
+  - "Custom scope" — User provides bespoke milestone goals
+- If "Custom scope", ask one focused follow-up question and capture the goals verbatim.
+- Summarize the selected direction as draft milestone goals and ask for confirm/adjust.
+- Hard gate: do not continue to Step 3 until user confirms goals.
 
 ## 3. Determine Milestone Version
 
@@ -319,6 +325,9 @@ Success criteria:
 **If "Adjust":** Get notes, re-spawn roadmapper with revision context, loop until approved.
 **If "Review":** Display raw ROADMAP.md, re-ask.
 
+**Hard gate before completion:** verify `.planning/ROADMAP.md` exists on disk.
+- If missing, treat as `## ROADMAP BLOCKED` (agent returned success without writing file), explain the issue, and re-spawn roadmapper with explicit instruction to write `.planning/ROADMAP.md`, `.planning/STATE.md`, and REQUIREMENTS traceability updates before returning.
+
 **Commit roadmap** (after approval):
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.cjs commit "docs: create milestone v[X.Y] roadmap ([N] phases)" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
@@ -364,6 +373,7 @@ Also: `/gsd:plan-phase [N]` — skip discussion, plan directly
 - [ ] REQUIREMENTS.md created with REQ-IDs
 - [ ] gsd-roadmapper spawned with phase numbering context
 - [ ] Roadmap files written immediately (not draft)
+- [ ] `.planning/ROADMAP.md` exists on disk before Done
 - [ ] User feedback incorporated (if any)
 - [ ] ROADMAP.md phases continue from previous milestone
 - [ ] All commits made (if planning docs committed)

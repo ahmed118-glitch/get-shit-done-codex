@@ -1,12 +1,12 @@
 ---
-description: Start a new milestone cycle — update PROJECT.md and route to requirements
+description: Start a new milestone cycle end-to-end (questioning -> requirements -> roadmap)
 argument-hint: "[milestone name, for example v1.1 Notifications]"
 ---
 
 $ARGUMENTS
 
 ## Objective
-Start a new milestone cycle — update PROJECT.md and route to requirements
+Start a new milestone cycle end-to-end (questioning -> requirements -> roadmap)
 
 ## Compatibility
 - Use .codex/skills/get-shit-done-codex semantics.
@@ -22,6 +22,8 @@ Start a new milestone cycle — update PROJECT.md and route to requirements
 - No jq / bash-only constructs.
 - Accept natural-language command input; do not require an exact literal argument template.
 - If a required argument is still missing after extraction, ask one concise clarification question.
+- If `.planning/MILESTONE-CONTEXT.md` is missing, ask options before drafting goals; do not assume milestone scope.
+- Do not complete successfully unless `.planning/ROADMAP.md` exists (or explicit `ROADMAP BLOCKED` is surfaced).
 
 ## Subagent lifecycle (required)
 
@@ -36,15 +38,22 @@ Start a new milestone cycle — update PROJECT.md and route to requirements
 node <gsd-tools-path> init new-milestone --raw
 
 3. Load .claude/get-shit-done/workflows/new-milestone.md and execute it step-by-step.
-4. Translate each Task(...) in workflow into:
+4. If `.planning/MILESTONE-CONTEXT.md` is absent, run an explicit options question before requirements:
+   - "Ship features (Recommended)"
+   - "Stabilize quality"
+   - "Platform + ops"
+   - "Custom scope"
+   Then summarize the chosen direction and ask for confirmation.
+5. Translate each Task(...) in workflow into:
    - spawn_agent with the matching role file context from .claude/agents/.
    - wait for each spawned agent and apply returned output before moving forward.
-5. Preserve all gates and routing from upstream workflow.
-6. Preserve commit behavior using 
+6. Preserve all gates and routing from upstream workflow.
+7. Before reporting success, verify `.planning/ROADMAP.md` exists. If missing, treat as blocked and continue workflow remediation.
+8. Preserve commit behavior using 
 node <gsd-tools-path> commit "message" --files ....
-7. If commit preflight fails (no git / no commit flag), proceed in read-only mode and report clearly.
+9. If commit preflight fails (no git / no commit flag), proceed in read-only mode and report clearly.
 
 ## Completion output
 - Summarize key artifacts created/updated.
-- Next recommended command: use the next user-facing GSD command (Codex prompt name + Claude slash command).
+- Next recommended command: use the next user-facing GSD command (`/prompts:gsd-...` for Codex + `/gsd:...` for Claude).
 - Never recommend internal `node ... gsd-tools ...` commands to the user.
